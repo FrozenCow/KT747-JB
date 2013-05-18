@@ -3143,6 +3143,7 @@ static int fsg_main_thread(void *fsg_)
 static DEVICE_ATTR(ro, 0444, fsg_show_ro, NULL);
 static DEVICE_ATTR(nofua, 0644, fsg_show_nofua, NULL);
 static DEVICE_ATTR(file, 0444, fsg_show_file, NULL);
+static DEVICE_ATTR(cdrom, 0444, fsg_show_cdrom, NULL);
 
 
 /*-------------------------------------------------------------------------*/
@@ -3190,6 +3191,7 @@ static void /* __init_or_exit */ fsg_unbind(struct usb_gadget *gadget)
 			device_remove_file(&curlun->dev, &dev_attr_nofua);
 			device_remove_file(&curlun->dev, &dev_attr_ro);
 			device_remove_file(&curlun->dev, &dev_attr_file);
+			device_remove_file(&curlun->dev, &dev_attr_cdrom);
 			fsg_lun_close(curlun);
 			device_unregister(&curlun->dev);
 			curlun->registered = 0;
@@ -3411,6 +3413,9 @@ static int __init fsg_bind(struct usb_gadget *gadget)
 		if (rc)
 			goto out;
 		rc = device_create_file(&curlun->dev, &dev_attr_file);
+		if (rc)
+			goto out;
+		rc = device_create_file(&curlun->dev, &dev_attr_cdrom);
 		if (rc)
 			goto out;
 
